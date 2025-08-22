@@ -1,0 +1,256 @@
+.packages-container {
+  padding: 30px;
+  font-family: 'Segoe UI', sans-serif;
+  color: #333;
+  background-color: #f9f9f9;
+}
+
+.packages-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.search-add {
+  display: flex;
+  gap: 10px;
+}
+
+.search-add input {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.add-btn {
+  background-color: #007bff;
+  color: white;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.packages-main {
+  display: flex;
+  margin-top: 30px;
+  gap: 30px;
+}
+
+.left-section {
+  flex: 3;
+}
+
+.right-sidebar {
+  flex: 1;
+}
+
+.featured-package {
+  display: flex;
+  gap: 20px;
+  background-color: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+
+.featured-package img {
+  width: 280px;
+  border-radius: 14px;
+  object-fit: cover;
+}
+
+.featured-info h3 {
+  margin-bottom: 10px;
+  font-size: 24px;
+  color: #007bff;
+}
+
+.featured-info p {
+  margin: 6px 0;
+  line-height: 1.5;
+}
+
+.edit-btn {
+  background-color: #ffc107;
+  color: black;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  margin-top: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tags {
+  margin-top: 12px;
+}
+
+.tag {
+  background-color: #e9f5ff;
+  color: #007bff;
+  padding: 6px 10px;
+  margin: 4px;
+  border-radius: 12px;
+  display: inline-block;
+  font-size: 13px;
+}
+
+.section-title {
+  margin-top: 40px;
+  font-size: 20px;
+  color: #444;
+  font-weight: bold;
+}
+
+.recommended-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 🔥 Creates 3 equal columns */
+  gap: 20px;
+  margin-top: 15px;
+}
+
+.recommended-card {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.2s;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.recommended-card:hover {
+  transform: scale(1.03);
+}
+
+.recommended-card img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+}
+
+.recommended-card h5 {
+  margin: 10px 12px 5px;
+  font-size: 16px;
+  color: #007bff;
+}
+
+.recommended-card p {
+  margin: 0 12px 12px;
+  font-size: 14px;
+  color: #666;
+}
+
+
+.popular-card {
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.popular-card:hover {
+  transform: scale(1.02);
+}
+
+.popular-card img {
+  width: 70px;
+  height: 70px;
+  border-radius: 12px;
+  object-fit: cover;
+  margin-right: 10px;
+}
+
+.popular-card h5 {
+  margin: 0;
+  color: #333;
+}
+
+.popular-card p {
+  margin: 5px 0 0;
+  font-size: 13px;
+  color: #666;
+}
+
+/* Modal styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 30px;
+  border-radius: 16px;
+  width: 600px;
+  max-width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.modal-content img {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.modal-content h3 {
+  color: #007bff;
+  margin-top: 10px;
+  font-size: 24px;
+}
+
+.modal-content p {
+  font-size: 15px;
+  color: #444;
+  line-height: 1.5;
+}
+
+.modal-content .price {
+  font-weight: bold;
+  font-size: 16px;
+  margin-top: 10px;
+  color: #333;
+}
+
+.modal-content button {
+  margin-top: 20px;
+  padding: 8px 18px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.modal-content strong {
+  color: #333;
+}
+
+.modal-content ul {
+  list-style-type: disc;
+  padding-left: 20px;
+}

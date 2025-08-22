@@ -1,0 +1,57 @@
+.travel-guide-page {
+  padding: 40px 20px;
+  font-family: 'Segoe UI', sans-serif;
+  background: #f0f8ff;
+  color: #003366;
+}
+
+.travel-guide-page h1 {
+  text-align: center;
+  margin-bottom: 40px;
+  color: #0056b3;
+}
+
+.destination-guide {
+  background: white;
+  margin: 20px auto;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 0 12px rgba(0, 102, 204, 0.15);
+  max-width: 900px;
+}
+
+.destination-guide h2 {
+  margin-bottom: 20px;
+  color: #1976d2;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 10px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.info-grid h4 {
+  color: #004080;
+  margin-bottom: 10px;
+}
+
+.info-grid ul, .info-grid ol {
+  padding-left: 18px;
+  line-height: 1.6;
+}
+
+.tips-carousel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tip {
+  background: #e3f2fd;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border-left: 4px solid #1976d2;
+}

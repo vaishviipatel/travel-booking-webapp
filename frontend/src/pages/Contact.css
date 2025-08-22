@@ -1,0 +1,110 @@
+.contact-us-page {
+  position: relative;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #e0f2ff, #b3d4fc);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Blobs (soft blue glow) */
+.background-blobs .blob {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  filter: blur(100px);
+  z-index: 1;
+  opacity: 0.6;
+}
+
+.blob1 {
+  background: #64b5f6;
+  top: -80px;
+  left: -80px;
+}
+
+.blob2 {
+  background: #90caf9;
+  bottom: -80px;
+  right: -80px;
+}
+
+/* Glassmorphism Container */
+.contact-form-container {
+  position: relative;
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 20px;
+  padding: 40px 30px;
+  max-width: 500px;
+  width: 100%;
+  backdrop-filter: blur(15px);
+  box-shadow: 0 8px 32px rgba(0, 0, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  text-align: center;
+  color: #003366;
+}
+
+.contact-form-container h2 {
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+/* Form Fields */
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 20px;
+  border: none;
+  border-bottom: 2px solid #1976d2;
+  background: transparent;
+  color: #003366;
+  font-size: 16px;
+  outline: none;
+}
+
+.contact-form input::placeholder,
+.contact-form textarea::placeholder {
+  color: #00509e;
+}
+
+.contact-form textarea {
+  resize: none;
+}
+
+/* Send Button */
+.contact-form button {
+  padding: 10px 30px;
+  border: none;
+  background: #1976d2;
+  color: white;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.contact-form button:hover {
+  background: #1565c0;
+}
+
+/* Social Icons */
+.social-icons {
+  margin-top: 20px;
+}
+
+.social-icons a {
+  margin: 0 10px;
+  color: #1976d2;
+  font-size: 22px;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.social-icons a:hover {
+  transform: scale(1.2);
+  color: #0d47a1;
+}
