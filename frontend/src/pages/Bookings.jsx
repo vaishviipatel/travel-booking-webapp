@@ -1,96 +1,82 @@
+// src/pages/Bookings.jsx
 import React from "react";
 import "./Bookings.css";
-import { FaSearch, FaPlus } from "react-icons/fa";
-
-const bookings = [
-  {
-    id: 1,
-    name: "Camille Sloan",
-    image: "/images/user1.jpg",
-    code: "BK925348",
-    destination: "Bali, Indonesia",
-    date: "20 June 2025",
-    status: "Confirmed",
-  },
-  {
-    id: 2,
-    name: "Dylan James",
-    image: "/images/user1.jpg",
-    code: "BK192830",
-    destination: "Goa, India",
-    date: "22 June 2025",
-    status: "Pending",
-  },
-  {
-    id: 3,
-    name: "Sophia Khan",
-    image: "/images/user1.jpg",
-    code: "BK390182",
-    destination: "Paris, France",
-    date: "25 June 2025",
-    status: "Cancelled",
-  },
-  {
-  id: 4,
-  name: "Arjun Mehta",
-  image: "/images/user1.jpg",
-  code: "BK120394",
-  destination: "Manali, India",
-  date: "26 June 2025",
-  status: "Confirmed",
-},
-{
-  id: 5,
-  name: "Emma Wilson",
-  image: "/images/user1.jpg",
-  code: "BK483920",
-  destination: "Rome, Italy",
-  date: "28 June 2025",
-  status: "Pending",
-},
-{
-  id: 6,
-  name: "Ravi Desai",
-  image: "/images/user1.jpg",
-  code: "BK849301",
-  destination: "Dubai, UAE",
-  date: "30 June 2025",
-  status: "Confirmed",
-},
-{
-  id: 7,
-  name: "Ava Martinez",
-  image: "/images/user1.jpg",
-  code: "BK932847",
-  destination: "New York, USA",
-  date: "2 July 2025",
-  status: "Cancelled",
-},
-{
-  id: 8,
-  name: "Kabir Shah",
-  image: "/images/user1.jpg",
-  code: "BK572310",
-  destination: "Jaipur, India",
-  date: "5 July 2025",
-  status: "Pending",
-}
-
-];
+import { FaSearch, FaTrash, FaCheck } from "react-icons/fa";
+import { useAuth } from "../context/AuthContext";
+import { useBookings } from "../context/BookingContext";
 
 export default function Bookings() {
+  const { user } = useAuth();
+  const { bookings, deleteBooking, confirmBooking } = useBookings();
+
+  const isAdmin = user?.email === "vishubpatel102@gmail.com"; // Admin by email
+
+  const displayedBookings = isAdmin
+    ? bookings
+    : bookings.filter(b => b.userId === user?.id);
+
+  const handleDelete = (id) => {
+    if (window.confirm("Are you sure you want to cancel this booking?")) {
+      deleteBooking(id);
+    }
+  };
+
+  const handleConfirm = async (id) => {
+    if (window.confirm("Confirm this booking and send email to customer?")) {
+      const booking = bookings.find(b => b.id === id);
+
+      // Call backend to send email
+      try {
+        const response = await fetch("http://localhost:5000/api/send-confirmation-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            toEmail: booking.userEmail,
+            userName: booking.userName,
+            packageTitle: booking.packageTitle,
+            date: booking.date,
+            code: booking.code,
+            destination: booking.destination,
+            totalPrice: booking.totalPrice || "Not specified", // fallback for old bookings
+            travelersDetails: booking.travelersDetails || [], // array of {name, age, gender}
+          }),
+        });
+
+        const data = await response.json();
+        if (data.success) {
+          confirmBooking(id); // Now change status to Confirmed
+          alert("Booking confirmed and email sent!");
+        } else {
+          alert("Booking confirmed but email failed: " + data.message);
+          confirmBooking(id); // Still confirm even if email fails
+        }
+      } catch (err) {
+        console.error(err);
+        if (window.confirm("Email failed. Confirm booking anyway?")) {
+          confirmBooking(id);
+        }
+      }
+    }
+  };
+
+  const getStatusClass = (status) => {
+    switch (status.toLowerCase()) {
+      case "paid": return "paid";
+      case "confirmed": return "confirmed";
+      case "pending": return "pending";
+      default: return "pending";
+    }
+  };
+
   return (
     <div className="bookings-container">
       <div className="bookings-header">
-        <h2>Bookings</h2>
+        <h2>{isAdmin ? "All Bookings (Admin Dashboard)" : "My Bookings"}</h2>
         <div className="header-right">
           <div className="search-box">
             <FaSearch className="icon" />
             <input type="text" placeholder="Search booking..." />
           </div>
-          <button className="new-booking-btn">
-            <FaPlus /> New Booking
-          </button>
         </div>
       </div>
 
@@ -102,28 +88,70 @@ export default function Bookings() {
               <th>Booking Code</th>
               <th>Destination</th>
               <th>Date</th>
+              <th>Package</th>
               <th>Status</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {bookings.map((booking) => (
-              <tr key={booking.id}>
-                <td>
-                  <div className="user-info">
-                    <img src={booking.image} alt={booking.name} />
-                    <span>{booking.name}</span>
-                  </div>
-                </td>
-                <td>{booking.code}</td>
-                <td>{booking.destination}</td>
-                <td>{booking.date}</td>
-                <td>
-                  <span className={`status ${booking.status.toLowerCase()}`}>
-                    {booking.status}
-                  </span>
+            {displayedBookings.length === 0 ? (
+              <tr>
+                <td colSpan="7" style={{ textAlign: "center", padding: "40px" }}>
+                  No bookings yet.
                 </td>
               </tr>
-            ))}
+            ) : (
+              displayedBookings.map((booking) => (
+                <tr key={booking.id}>
+                  <td>
+                    <div className="user-info">
+                      <img src="/images/user1.jpg" alt={booking.userName} />
+                      <span>{booking.userName}</span>
+                    </div>
+                  </td>
+                  <td>{booking.code}</td>
+                  <td>{booking.destination}</td>
+                  <td>{booking.date}</td>
+                  <td>{booking.packageTitle}</td>
+                  <td>
+                    <span className={`status ${getStatusClass(booking.status)}`}>
+                      {booking.status}
+                    </span>
+                  </td>
+                  <td>
+                    <div className="actions">
+                      {/* Admin can confirm only if status is Paid */}
+                      {isAdmin && booking.status === "Paid" && (
+                        <button
+                          className="confirm-btn"
+                          onClick={() => handleConfirm(booking.id)}
+                          title="Confirm Booking & Send Email"
+                        >
+                          <FaCheck />
+                        </button>
+                      )}
+
+                      {/* User can cancel only if not Confirmed */}
+                      {/* Admin can delete anytime */}
+                      {(isAdmin || (booking.userId === user?.id && booking.status !== "Confirmed")) && (
+                        <button
+                          className="delete-btn"
+                          onClick={() => handleDelete(booking.id)}
+                          title="Cancel Booking"
+                        >
+                          <FaTrash />
+                        </button>
+                      )}
+
+                      {/* Optional: Show message if already confirmed */}
+                      {booking.status === "Confirmed" && !isAdmin && (
+                        <span style={{ fontSize: "12px", color: "#28a745" }}>✅ Confirmed</span>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

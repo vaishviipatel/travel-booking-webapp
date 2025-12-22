@@ -159,7 +159,7 @@ export default function DestinationCard() {
               </div>
               <p className="price">{dest.price}</p>
               <p className="description">{dest.description}</p>
-              <button className="details-btn">DETAILS</button>
+              
             </div>
           </div>
         ))}

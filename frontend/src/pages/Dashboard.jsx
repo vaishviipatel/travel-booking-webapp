@@ -1,4 +1,3 @@
-// src/pages/Dashboard.jsx
 import React, { useState } from "react";
 import Calendar from "react-calendar";
 import { Link } from "react-router-dom";
@@ -12,7 +11,6 @@ import {
   FaPlaneDeparture,
   FaUserFriends,
   FaImages,
-  
   FaComments,
 } from "react-icons/fa";
 import {
@@ -26,7 +24,9 @@ import {
   Pie,
   Cell,
 } from "recharts";
-import "./Dashboard.css";
+import './Dashboard.css';
+
+import ProfileMenu from "../components/ProfileMenu";
 
 const revenueData = [
   { day: "Mon", revenue: 200 },
@@ -39,10 +39,10 @@ const revenueData = [
 ];
 
 const destinationData = [
-  { name: "Tokyo", value: 35 },
-  { name: "Sydney", value: 30 },
-  { name: "Paris", value: 22 },
-  { name: "Venice", value: 15 },
+  { name: "Tokyo", value: 10 },
+  
+  { name: "Paris", value: 50 },
+  { name: "Venice", value: 40 },
 ];
 
 const COLORS = ["#007bff", "#00bcd4", "#4caf50", "#ff9800"];
@@ -54,54 +54,17 @@ export default function Dashboard() {
     <div className="dashboard-container">
       {/* Sidebar */}
       <aside className="sidebar">
-             <div className="logo">
-                <Link to="/" className="logo-text">🌍 TravelPoint</Link>
-            </div>
+        <div className="logo">
+          <Link to="/" className="logo-text">🌍 TravelPoint</Link>
+        </div>
         <ul className="sidebar-menu">
-        <li>
-           <Link to="/dashboard" className="sidebar-link active">
-           <FaChartLine /> Dashboard
-           </Link>
-        </li>
-        <li>
-            <Link to="/packages" className="sidebar-link">
-            <FaSuitcaseRolling /> Packages
-            </Link>
-        </li>
-
-          <li>
-              <Link to="/bookings" className="sidebar-link">
-              <FaPlaneDeparture /> Bookings
-              </Link>
-          </li>
-
-          
-         
-          <li>
-            <Link to="/traveler-stories" className="sidebar-link">
-            <FaUserFriends /> Traveler Stories
-             </Link>
-            </li>
-
-          <li>
-            <Link to="/guides" className="sidebar-link">
-            <FaUsers /> Guides
-            </Link>
-          </li>
-
-          <li>
-            <Link to="/gallery" className="sidebar-link">
-            <FaImages /> Gallery
-            </Link>
-          </li>
-
-          
-          <li>
-             <Link to="/feedback" className="sidebar-link">
-             <FaComments /> Feedback
-             </Link>
-          </li>
-
+          <li><Link to="/dashboard" className="sidebar-link active"><FaChartLine /> Dashboard</Link></li>
+          <li><Link to="/packages" className="sidebar-link"><FaSuitcaseRolling /> Packages</Link></li>
+          <li><Link to="/bookings" className="sidebar-link"><FaPlaneDeparture /> Bookings</Link></li>
+          <li><Link to="/traveler-stories" className="sidebar-link"><FaUserFriends /> Traveler Stories</Link></li>
+          <li><Link to="/guides" className="sidebar-link"><FaUsers /> Guides</Link></li>
+          <li><Link to="/gallery" className="sidebar-link"><FaImages /> Gallery</Link></li>
+          <li><Link to="/feedback" className="sidebar-link"><FaComments /> Feedback</Link></li>
         </ul>
       </aside>
 
@@ -110,13 +73,10 @@ export default function Dashboard() {
         <header className="dashboard-header">
           <h1>Dashboard</h1>
           <input className="search-bar" type="text" placeholder="Search anything..." />
-          <div className="profile">
-            <img src="/images/profile.jpg" alt="Profile" />
-            <span>Ruben Herwitz</span>
-          </div>
+          <ProfileMenu />
         </header>
 
-        {/* Stats */}
+        {/* Stats Section */}
         <section className="stats">
           <div className="card stat-card">
             <h4>Total Booking</h4>
@@ -152,16 +112,7 @@ export default function Dashboard() {
           <div className="card chart-card">
             <h4>Top Destinations</h4>
             <PieChart width={250} height={250}>
-              <Pie
-                data={destinationData}
-                cx="50%"
-                cy="50%"
-                innerRadius={50}
-                outerRadius={80}
-                fill="#8884d8"
-                paddingAngle={5}
-                dataKey="value"
-              >
+              <Pie data={destinationData} cx="50%" cy="50%" innerRadius={50} outerRadius={80} dataKey="value">
                 {destinationData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}

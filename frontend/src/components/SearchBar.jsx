@@ -29,7 +29,8 @@ export default function SearchBar() {
         />
       </div>
 
-      <button className="filter-btn">MORE FILTERS</button>
+      
+      
     </div>
   );
 }

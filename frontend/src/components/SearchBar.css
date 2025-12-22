@@ -45,8 +45,8 @@
 }
 
 .filter-btn {
-  background-color: #00bcd4;
-  color: rgb(98, 187, 239);
+  background-color: #00bcd4;  /* Blue background */
+  color: #fff;               /* White text */
   padding: 10px 20px;
   border: none;
   border-radius: 25px;
@@ -58,5 +58,5 @@
 }
 
 .filter-btn:hover {
-  background-color: #019aad;
+  background-color: #019aad; /* Darker blue on hover */
 }

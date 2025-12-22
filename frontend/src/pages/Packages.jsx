@@ -1,6 +1,10 @@
-import React, { useState } from "react";
-import { FaEdit } from "react-icons/fa";
+import React, { useState, useMemo } from "react";
+import { FaEdit, FaPlus } from "react-icons/fa";
+import { useAuth } from "../context/AuthContext.jsx";
+import { useBookings } from "../context/BookingContext.jsx";
 import "./Packages.css";
+import AdminPackageEditor from "../components/AdminPackageEditor";
+
 
 const travelPlans = {
   "Darjeeling Tea Trails": [
@@ -256,9 +260,49 @@ const recommendedPackages = [
  price: "$3800" }
 
 ];
-
 export default function Packages() {
+  const { user } = useAuth();
+  const { addBooking } = useBookings();
+  const isAdmin = user?.role === "admin";
+
   const [selectedPackage, setSelectedPackage] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // Admin states
+  const [editorOpen, setEditorOpen] = useState(false);
+  const [currentPackage, setCurrentPackage] = useState(null);
+  const [isAddMode, setIsAddMode] = useState(false);
+
+  // Booking states
+  const [bookingFormOpen, setBookingFormOpen] = useState(false);
+  const [travelersDetailsOpen, setTravelersDetailsOpen] = useState(false);
+  const [paymentModalOpen, setPaymentModalOpen] = useState(false);
+  const [pendingBookingData, setPendingBookingData] = useState(null);
+
+  const [bookingForm, setBookingForm] = useState({
+    name: user?.name || "",
+    date: "",
+    travelers: 1,
+  });
+
+  const [travelersDetails, setTravelersDetails] = useState([]);
+
+  // Combine all packages
+  const allPackages = useMemo(() => {
+    const popular = popularPackages.map(pkg => ({ ...pkg, type: "popular" }));
+    const recommended = recommendedPackages.map(pkg => ({ ...pkg, type: "recommended" }));
+    const featured = { ...featuredPackage, type: "featured" };
+    return [featured, ...popular, ...recommended];
+  }, []);
+
+  // Search filtering - now used
+  const filteredPackages = useMemo(() => {
+    if (!searchTerm.trim()) return allPackages;
+    const lowerSearch = searchTerm.toLowerCase();
+    return allPackages.filter(pkg =>
+      pkg.title.toLowerCase().includes(lowerSearch)
+    );
+  }, [searchTerm, allPackages]);
 
   const handlePackageClick = (pkg) => {
     setSelectedPackage(pkg);
@@ -268,42 +312,201 @@ export default function Packages() {
     setSelectedPackage(null);
   };
 
+  const openEditor = (pkg = null) => {
+    setCurrentPackage(pkg ? { ...pkg } : {
+      title: "", location: "", description: "", price: "", duration: "", image: "", tags: [], bestPlaces: [], bestSeason: ""
+    });
+    setIsAddMode(!pkg);
+    setEditorOpen(true);
+  };
+
+  const handleSave = () => {
+    alert(`Package ${isAddMode ? "added" : "updated"} successfully!`);
+    setEditorOpen(false);
+  };
+
+  const handleBookingSubmit = (e) => {
+    e.preventDefault();
+
+    if (bookingForm.travelers < 1) {
+      alert("Number of travelers must be at least 1");
+      return;
+    }
+
+    if (bookingForm.travelers > 1) {
+      const initialDetails = Array.from({ length: bookingForm.travelers }, (_, i) => ({
+        name: i === 0 ? bookingForm.name : "",
+        age: "",
+        gender: "Male"
+      }));
+      setTravelersDetails(initialDetails);
+      setTravelersDetailsOpen(true);
+      setBookingFormOpen(false);
+    } else {
+      proceedToPayment([{ name: bookingForm.name, age: "", gender: "Male" }]);
+    }
+  };
+
+  const handleTravelersDetailsSubmit = (e) => {
+    e.preventDefault();
+
+    const isValid = travelersDetails.every(t => t.name.trim() && t.age > 0 && t.age <= 120);
+    if (!isValid) {
+      alert("Please fill valid Name and Age for all travelers.");
+      return;
+    }
+
+    proceedToPayment(travelersDetails);
+  };
+
+  const proceedToPayment = (travelerList) => {
+  const bookingCode = "BK" + Math.floor(100000 + Math.random() * 900000);
+
+  // Smart destination mapping
+  const getDestination = () => {
+    if (selectedPackage.location) {
+      return selectedPackage.location;
+    }
+
+    const destinationMap = {
+      "Bali Island Retreat": "Bali, Indonesia",
+      "Dubai Desert Escape": "Dubai, UAE",
+      "Kerala Backwaters": "Kerala, India",
+      "Himalayan Trek": "Himalayas, India",
+      "Andaman Islands": "Andaman & Nicobar Islands, India",
+      "Jaipur Heritage Tour": "Jaipur, Rajasthan, India",
+      "Kashmir Heaven Tour": "Kashmir, India",
+      "Himachal Hill Adventure": "Himachal Pradesh, India",
+      "Jaisalmer Desert Safari": "Jaisalmer, Rajasthan, India",
+      "Kutch Festival Tour": "Kutch, Gujarat, India",
+      "Gokarna Beach Camp": "Gokarna, Karnataka, India",
+      "Istanbul Cultural Tour": "Istanbul, Turkey",
+      "Bangkok Buzz Tour": "Bangkok, Thailand",
+      "Barcelonian Streets": "Barcelona, Spain",
+      "Cape Town Adventure": "Cape Town, South Africa",
+      "Halong Bay Cruise": "Halong Bay, Vietnam",
+      "Hong Kong Explorer": "Hong Kong",
+      "Goa Party Nights": "Goa, India",
+      "Diskit Monastery Tour": "Ladakh, India",
+      "Devki Spiritual Walk": "Vrindavan, India",
+      "Rann of Kutch Festival": "Kutch, Gujarat, India",
+      "Golden Temple": "Amritsar, Punjab, India",
+      "Sikkim Serenity": "Sikkim, India",
+      "Darjeeling Tea Trails": "Darjeeling, West Bengal, India",
+      "Tropical Goa Getaway": "Goa, India",
+    };
+
+    return destinationMap[selectedPackage.title] || selectedPackage.title.replace(/\s*(Tour|Retreat|Escape|Adventure|Trek|Camp|Festival|Getaway|Buzz|Streets|Cruise|Explorer|Nights|Trails|Serenity|Walk)$/i, "").trim();
+  };
+
+  const destination = getDestination();
+
+  // ... rest of the function remains the same
+    const formattedDate = new Date(bookingForm.date).toLocaleDateString('en-GB', {
+      day: 'numeric', month: 'long', year: 'numeric'
+    });
+
+    const pricePerPerson = parseFloat(selectedPackage.price.replace(/[^0-9.-]+/g, "")) || 0;
+    const totalAmount = pricePerPerson * bookingForm.travelers;
+
+    const bookingData = {
+      userId: user?.id,
+      userName: bookingForm.name || user?.name || "Guest User",
+      userEmail: user?.email || "",
+      code: bookingCode,
+      destination,
+      date: formattedDate,
+      status: "Pending",
+      packageTitle: selectedPackage.title,
+      pricePerPerson: selectedPackage.price,
+      totalPrice: `$${totalAmount.toLocaleString()}`,
+      travelers: bookingForm.travelers,
+      travelersDetails: travelerList,
+    };
+
+    setPendingBookingData(bookingData);
+    setPaymentModalOpen(true);
+    setTravelersDetailsOpen(false);
+  };
+
+  const handleFakePaymentSuccess = () => {
+    if (pendingBookingData) {
+      addBooking({ ...pendingBookingData, status: "Paid" });
+      alert(`Payment Successful! 🎉\nTotal Paid: ${pendingBookingData.totalPrice}`);
+
+      setPaymentModalOpen(false);
+      setPendingBookingData(null);
+      handleCloseDetail();
+
+      setBookingForm({ name: user?.name || "", date: "", travelers: 1 });
+      setTravelersDetails([]);
+    }
+  };
+
+  const updateTraveler = (index, field, value) => {
+    const updated = [...travelersDetails];
+    updated[index][field] = value;
+    setTravelersDetails(updated);
+  };
+
   return (
     <div className="packages-container">
       <div className="packages-header">
         <h2>Packages</h2>
         <div className="search-add">
-          <input type="text" placeholder="Search packages" />
-          <button className="add-btn">+ Add Package</button>
+          <input
+            type="text"
+            placeholder="Search packages..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          {isAdmin && (
+            <button className="add-btn" onClick={() => openEditor()}>
+              <FaPlus /> Add Package
+            </button>
+          )}
         </div>
       </div>
 
       <div className="packages-main">
         <div className="left-section">
+          {/* Featured Package */}
           <div className="featured-package">
-            <img src={featuredPackage.image} alt="featured" />
+            <img src={featuredPackage.image} alt={featuredPackage.title} />
             <div className="featured-info">
               <h3>{featuredPackage.title}</h3>
               <p>{featuredPackage.description}</p>
               <p className="price">
                 <span className="price-bold">{featuredPackage.price}</span> | {featuredPackage.duration}
               </p>
-              <button className="edit-btn"><FaEdit /> Edit Detail</button>
+              {isAdmin && (
+                <button className="edit-btn" onClick={() => openEditor(featuredPackage)}>
+                  <FaEdit /> Edit
+                </button>
+              )}
               <div className="tags">
-                {featuredPackage.tags.map((tag, i) => (
-                  <span key={i} className="tag">{tag}</span>
-                ))}
+                {featuredPackage.tags.map(tag => <span key={tag} className="tag">{tag}</span>)}
               </div>
             </div>
           </div>
 
-          <h4 className="section-title">Recommended Packages</h4>
+          {/* Search Results or Recommended */}
+          <h4 className="section-title">
+            {searchTerm.trim() ? `Results for "${searchTerm}"` : "Recommended Packages"}
+          </h4>
           <div className="recommended-list">
-            {recommendedPackages.map((pkg, i) => (
-              <div className="recommended-card" key={i} onClick={() => handlePackageClick(pkg)}>
+            {(searchTerm.trim() ? filteredPackages : recommendedPackages).map((pkg, i) => (
+              <div key={i} className="recommended-card" onClick={() => handlePackageClick(pkg)}>
                 <img src={pkg.image} alt={pkg.title} />
-                <h5>{pkg.title}</h5>
-                <p>{pkg.price}</p>
+                <div className="card-info">
+                  <h5>{pkg.title}</h5>
+                  <p>{pkg.price}</p>
+                </div>
+                {isAdmin && (
+                  <button className="card-edit-btn" onClick={(e) => { e.stopPropagation(); openEditor(pkg); }}>
+                    <FaEdit />
+                  </button>
+                )}
               </div>
             ))}
           </div>
@@ -312,49 +515,209 @@ export default function Packages() {
         <div className="right-sidebar">
           <h4 className="section-title">Popular Packages</h4>
           {popularPackages.map((pkg, i) => (
-            <div className="popular-card" key={i} onClick={() => handlePackageClick(pkg)}>
+            <div key={i} className="popular-card" onClick={() => handlePackageClick(pkg)}>
               <img src={pkg.image} alt={pkg.title} />
               <div>
                 <h5>{pkg.title}</h5>
                 <p>{pkg.price}</p>
               </div>
+              {isAdmin && (
+                <button className="card-edit-btn" onClick={(e) => { e.stopPropagation(); openEditor(pkg); }}>
+                  <FaEdit />
+                </button>
+              )}
             </div>
           ))}
         </div>
       </div>
 
+      {/* Package Detail Modal */}
       {selectedPackage && (
-        <div className="modal-overlay">
-          <div className="modal-content">
+        <div className="modal-overlay" onClick={handleCloseDetail}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
             <img src={selectedPackage.image} alt={selectedPackage.title} />
             <div>
               <h3>{selectedPackage.title}</h3>
-              <p>{selectedPackage.description || "Detailed itinerary and experiences coming soon."}</p>
-              <p className="price">
-                <span style={{ color: "#007BFF", fontWeight: "600" }}>{selectedPackage.price}</span>{" "}
-                | <strong>{selectedPackage.duration || "5 Nights / 6 Days"}</strong>
-              </p>
-              {selectedPackage.bestPlaces && (
-                <>
-                  <p><strong>Best Places:</strong> {selectedPackage.bestPlaces.join(", ")}</p>
-                  <p><strong>Best Season:</strong> {selectedPackage.bestSeason}</p>
-                </>
-              )}
+              <p>{selectedPackage.description || "Amazing experience awaits!"}</p>
+              <p className="price"><strong>{selectedPackage.price}</strong> | {selectedPackage.duration}</p>
+
               {travelPlans[selectedPackage.title] && (
                 <div className="travel-plan">
-                  <h4>Travel Plan</h4>
+                  <h4>Itinerary</h4>
                   <ul>
-                    {travelPlans[selectedPackage.title].map((day, index) => (
-                      <li key={index}>{day}</li>
+                    {travelPlans[selectedPackage.title].map((day, i) => (
+                      <li key={i}>{day}</li>
                     ))}
                   </ul>
                 </div>
               )}
+
+              {user && !isAdmin && (
+                <button className="book-now-btn" onClick={() => setBookingFormOpen(true)}>
+                  Book Now
+                </button>
+              )}
+
+              {isAdmin && (
+                <button onClick={() => { handleCloseDetail(); openEditor(selectedPackage); }}>
+                  <FaEdit /> Edit Package
+                </button>
+              )}
+
               <button onClick={handleCloseDetail}>Close</button>
             </div>
           </div>
         </div>
       )}
+
+
+      {/* Booking Form Modal */}
+      {bookingFormOpen && user && !isAdmin && (
+        <div className="modal-overlay" onClick={() => setBookingFormOpen(false)}>
+          <div className="booking-form-modal" onClick={e => e.stopPropagation()}>
+            <h3>Book: {selectedPackage?.title}</h3>
+            <form onSubmit={handleBookingSubmit}>
+              <label>
+                Full Name (Lead Traveler):
+                <input
+                  type="text"
+                  value={bookingForm.name}
+                  onChange={e => setBookingForm({ ...bookingForm, name: e.target.value })}
+                  required
+                />
+              </label>
+              <label>
+                Travel Date:
+                <input
+                  type="date"
+                  value={bookingForm.date}
+                  onChange={e => setBookingForm({ ...bookingForm, date: e.target.value })}
+                  required
+                />
+              </label>
+              <label>
+                Number of Travelers:
+                <input
+                  type="number"
+                  min="1"
+                  max="30"
+                  value={bookingForm.travelers}
+                  onChange={e => {
+                    const val = parseInt(e.target.value) || 1;
+                    setBookingForm({ ...bookingForm, travelers: val });
+                  }}
+                  required
+                />
+              </label>
+              <div className="form-actions">
+                <button type="submit">Next</button>
+                <button type="button" onClick={() => setBookingFormOpen(false)}>Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Travelers Details Modal (only if travelers > 1) */}
+      {travelersDetailsOpen && (
+        <div className="modal-overlay" onClick={() => setTravelersDetailsOpen(false)}>
+          <div className="travelers-details-modal" onClick={e => e.stopPropagation()}>
+            <h3>Traveler Details ({bookingForm.travelers} Travelers)</h3>
+            <form onSubmit={handleTravelersDetailsSubmit}>
+              {travelersDetails.map((traveler, index) => (
+                <div key={index} className="traveler-entry">
+                  <h4>Traveler {index + 1} {index === 0 && "(Lead Traveler)"}</h4>
+                  <label>
+                    Full Name:
+                    <input
+                      type="text"
+                      value={traveler.name}
+                      onChange={e => updateTraveler(index, "name", e.target.value)}
+                      placeholder={index === 0 ? bookingForm.name : ""}
+                      required
+                    />
+                  </label>
+                  <label>
+                    Age:
+                    <input
+                      type="number"
+                      min="1"
+                      max="120"
+                      value={traveler.age}
+                      onChange={e => updateTraveler(index, "age", e.target.value)}
+                      required
+                    />
+                  </label>
+                  <label>
+                    Gender:
+                    <select
+                      value={traveler.gender}
+                      onChange={e => updateTraveler(index, "gender", e.target.value)}
+                    >
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </label>
+                </div>
+              ))}
+              <div className="form-actions">
+                <button type="submit">Proceed to Payment</button>
+                <button type="button" onClick={() => {
+                  setTravelersDetailsOpen(false);
+                  setBookingFormOpen(true);
+                }}>Back</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Updated Payment Modal - Shows Correct Total */}
+      {paymentModalOpen && pendingBookingData && (
+        <div className="modal-overlay" onClick={() => setPaymentModalOpen(false)}>
+          <div className="payment-modal" onClick={e => e.stopPropagation()}>
+            <h3>Payment Details</h3>
+            <div className="payment-summary">
+              <p><strong>Package:</strong> {pendingBookingData.packageTitle}</p>
+              <p><strong>Travelers:</strong> {pendingBookingData.travelers}</p>
+              <p><strong>Price per person:</strong> {pendingBookingData.pricePerPerson}</p>
+              <p className="total-price">
+                <strong>Total Amount:</strong>{" "}
+                <span style={{ color: "#28a745", fontSize: "1.6em", fontWeight: "bold" }}>
+                  {pendingBookingData.totalPrice}
+                </span>
+              </p>
+            </div>
+
+            <form className="fake-payment-form">
+              <label>Card Holder Name: <input type="text" placeholder="John Doe" required /></label>
+              <label>Card Number: <input type="text" placeholder="4111 1111 1111 1111" maxLength="19" required /></label>
+              <div className="expiry-cvv">
+                <label>Expiry Date: <input type="text" placeholder="MM/YY" maxLength="5" required /></label>
+                <label>CVV: <input type="number" placeholder="123" maxLength="3" required /></label>
+              </div>
+              
+              <div className="form-actions">
+                <button type="button" className="pay-btn" onClick={handleFakePaymentSuccess}>
+                  Pay Now
+                </button>
+                <button type="button" onClick={() => setPaymentModalOpen(false)}>Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Admin Editor Modal */}
+      <AdminPackageEditor
+        isOpen={editorOpen}
+        onClose={() => setEditorOpen(false)}
+        packageData={currentPackage}
+        setPackageData={setCurrentPackage}
+        onSave={handleSave}
+        isAddMode={isAddMode}
+      />
     </div>
   );
 }

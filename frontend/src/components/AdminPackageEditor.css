@@ -1,0 +1,145 @@
+.admin-editor-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.admin-editor-modal {
+  background: white;
+  border-radius: 16px;
+  width: 720px;
+  max-width: 95%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.admin-editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 30px 16px;
+  border-bottom: 1px solid #eee;
+}
+
+.admin-editor-header h2 {
+  margin: 0;
+  font-size: 24px;
+  color: #222;
+}
+
+.admin-close-btn {
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: #888;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.admin-close-btn:hover {
+  background: #f0f0f0;
+  color: #555;
+}
+
+.admin-editor-form {
+  padding: 24px 30px;
+}
+
+.form-row {
+  margin-bottom: 20px;
+}
+
+.form-row.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-row label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #444;
+  font-size: 14px;
+}
+
+.form-row input,
+.form-row textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 15px;
+  transition: border 0.2s;
+}
+
+.form-row input:focus,
+.form-row textarea:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+}
+
+.admin-editor-actions {
+  padding: 20px 30px;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.admin-cancel-btn {
+  background: #f8f9fa;
+  color: #555;
+  border: 1px solid #ddd;
+  padding: 10px 24px;
+  border-radius: 10px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.admin-cancel-btn:hover {
+  background: #e9ecef;
+}
+
+.admin-save-btn {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 28px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.admin-save-btn:hover {
+  background: #218838;
+}
+
+.admin-save-btn:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+}

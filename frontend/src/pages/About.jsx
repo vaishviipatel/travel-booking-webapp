@@ -1,7 +1,16 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import "./About.css";
 
 export default function AboutUs() {
+  const navigate = useNavigate();
+
+  const handleContactClick = () => {
+    navigate("/contact");
+    // Optional: smooth scroll to top when navigating
+    window.scrollTo(0, 0);
+  };
+
   return (
     <div className="aboutus-container">
       <header className="aboutus-header">
@@ -50,8 +59,8 @@ export default function AboutUs() {
           <h2>Why Choose Us</h2>
           <p>
             We stand out by offering personalized travel experiences, a user-friendly booking
-            system, and unbeatable customer satisfaction. Our team of experts ensures that your trip
-            is more than just a vacation—it’s a memory you’ll cherish forever.
+            system, and unbeatable customer satisfaction. Our team ensures your trip becomes a
+            memory you’ll cherish forever.
           </p>
         </div>
       </section>
@@ -70,10 +79,13 @@ export default function AboutUs() {
         </div>
       </section>
 
+      {/* CTA Section with Working Button */}
       <section className="aboutus-cta">
         <h2>Ready to Explore?</h2>
         <p>Contact our team to start planning your perfect getaway today.</p>
-        <button>Contact Us</button>
+        <button onClick={handleContactClick} className="cta-button">
+          Contact Us
+        </button>
       </section>
     </div>
   );

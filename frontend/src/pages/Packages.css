@@ -254,3 +254,208 @@
   list-style-type: disc;
   padding-left: 20px;
 }
+
+.no-results {
+  grid-column: 1 / -1; /* Span full width in grid */
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+  font-size: 18px;
+}
+
+.no-results p {
+  margin: 0;
+}
+.book-now-btn {
+  background-color: #28a745;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin: 10px 0;
+}
+
+.book-now-btn:hover {
+  background-color: #218838;
+}
+
+.booking-form-modal {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  max-width: 500px;
+  width: 90%;
+}
+
+.booking-form-modal label {
+  display: block;
+  margin: 15px 0 5px;
+  font-weight: bold;
+}
+
+.booking-form-modal input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.form-actions {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+/* Buttons in Package Details Modal */
+.modal-content > div > button {
+  margin: 10px 8px; /* Adds vertical margin and horizontal spacing */
+  padding: 10px 24px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+/* Book Now Button */
+.book-now-btn {
+  background-color: #28a745;
+  color: white;
+}
+
+.book-now-btn:hover {
+  background-color: #218838;
+}
+
+/* Close Button (default blue) */
+.modal-content > div > button:last-child {
+  background-color: #007bff;
+  color: white;
+}
+
+.modal-content > div > button:last-child:hover {
+  background-color: #0056b3;
+}
+
+/* Alternative: If you want Close button in lighter style */
+.modal-content > div > button:nth-child(2):not(.book-now-btn) {
+  background-color: #6c757d;
+  color: white;
+}
+
+.modal-content > div > button:nth-child(2):not(.book-now-btn):hover {
+  background-color: #545b62;
+}
+.payment-modal {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.payment-summary {
+  margin-bottom: 20px;
+  padding: 15px;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+.total-price {
+  font-size: 1.4em;
+  color: #28a745;
+  font-weight: bold;
+}
+
+.fake-payment-form label {
+  display: block;
+  margin-bottom: 15px;
+}
+
+.fake-payment-form input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+.expiry-cvv {
+  display: flex;
+  gap: 20px;
+}
+
+.expiry-cvv label {
+  flex: 1;
+}
+
+.demo-note {
+  background: #e7f3ff;
+  padding: 12px;
+  border-radius: 6px;
+  color: #0066cc;
+  font-size: 0.95em;
+  margin: 20px 0;
+}
+
+.pay-btn {
+  background: #28a745 !important;
+  color: white;
+  padding: 12px 24px;
+  font-size: 1.1em;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.pay-btn:hover {
+  background: #218838 !important;
+}
+
+/* Additional status style */
+.status.paid {
+  background: #d4edda;
+  color: #155724;
+}
+.travelers-details-modal {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  max-width: 650px;
+  width: 95%;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+
+.traveler-entry {
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 25px;
+  border: 1px solid #eee;
+}
+
+.traveler-entry h4 {
+  margin: 0 0 15px 0;
+  color: #333;
+}
+
+.traveler-entry label {
+  display: block;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.traveler-entry input,
+.traveler-entry select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+}
